@@ -32,19 +32,19 @@ class AppDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
             )
         """.trimIndent())
 
-        // Precarga (ejemplos: ajústalas a tu tarea)
+
         seedRates(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Para la tarea, simple:
+
         db.execSQL("DROP TABLE IF EXISTS rates")
         db.execSQL("DROP TABLE IF EXISTS conversions")
         onCreate(db)
     }
 
     private fun seedRates(db: SQLiteDatabase) {
-        // CA -> USD (ejemplos)
+
         insertRate(db, "HNL", "USD", 0.040)
         insertRate(db, "GTQ", "USD", 0.13)
         insertRate(db, "NIO", "USD", 0.027)
@@ -62,6 +62,6 @@ class AppDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
 
     companion object {
         private const val DB_NAME = "cambio_db.sqlite"
-        private const val DB_VERSION = 1
+        private const val DB_VERSION = 2
     }
 }

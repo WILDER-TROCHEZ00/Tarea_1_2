@@ -10,12 +10,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tarea_1_2.viewmodel.ConverterViewModel
+import androidx.compose.ui.platform.LocalFocusManager
 
-private val currencies = listOf("USD", "HNL", "GTQ", "NIO", "CRC", "PAB")
+
+private val currencies = listOf("USD", "HNL", "GTQ", "NI0", "CRC", "PAB")
 
 @Composable
 fun ConverterScreen(
     onGoHistory: () -> Unit,
+    onGoRates: () -> Unit,
     onConvertSuccess: (Long) -> Unit
 ) {
     val vm: ConverterViewModel = viewModel()
@@ -25,18 +28,26 @@ fun ConverterScreen(
     var fromCode by rememberSaveable { mutableStateOf("HNL") }
     var toCode by rememberSaveable { mutableStateOf("USD") }
     var errorLocal by rememberSaveable { mutableStateOf<String?>(null) }
+    val focusManager = LocalFocusManager.current
 
-    // Cuando el ViewModel termine y tenga ID, navegamos a Resultado
+
+
     LaunchedEffect(state.lastId) {
         val id = state.lastId
         if (id != null) {
+            // ✅ limpiar UI antes de navegar
+            amountText = ""
+            errorLocal = null
+            focusManager.clearFocus()
+
             onConvertSuccess(id)
-            vm.consumeLastId() // ✅ evita que navegue otra vez al volver
+            vm.consumeLastId()
         }
     }
 
 
-    // Si el VM devuelve error, muéstralo
+
+
     LaunchedEffect(state.error) {
         if (state.error != null) errorLocal = state.error
     }
@@ -91,7 +102,7 @@ fun ConverterScreen(
                     return@Button
                 }
 
-                // ✅ Aquí ya usamos SQLite: buscar tasa y guardar conversión
+
                 vm.convert(amount, fromCode, toCode)
             },
             modifier = Modifier.fillMaxWidth(),
@@ -105,6 +116,13 @@ fun ConverterScreen(
             modifier = Modifier.fillMaxWidth(),
             enabled = !state.isLoading
         ) { Text("Historial") }
+
+        OutlinedButton(
+            onClick = onGoRates,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !state.isLoading
+        ) { Text("Tasas") }
+
     }
 }
 
@@ -148,4 +166,5 @@ private fun CurrencyDropdown(
             }
         }
     }
+
 }

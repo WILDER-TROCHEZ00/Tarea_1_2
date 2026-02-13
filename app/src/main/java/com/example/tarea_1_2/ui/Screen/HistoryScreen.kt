@@ -9,7 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tarea_1_2.viewmodel.HistoryViewModel
+import java.util.Locale
 
+private fun d2(x: Double) = String.format(Locale.US, "%.2f", x)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
     onBack: () -> Unit,
@@ -20,34 +24,51 @@ fun HistoryScreen(
 
     LaunchedEffect(Unit) { vm.load() }
 
-    Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Historial", style = MaterialTheme.typography.headlineSmall)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Historial") },
+                navigationIcon = {
+                    TextButton(onClick = onBack) { Text("Atrás") }
+                }
+            )
+        }
+    ) { innerPadding ->
 
-        Spacer(Modifier.height(12.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+            if (items.isEmpty()) {
+                Text("No hay conversiones aún.")
+                return@Column
+            }
 
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(items) { item ->
-                Card(onClick = { onOpenDetails(item.id) }) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column {
-                            Text("${item.amount} ${item.fromCode} → ${item.toCode}")
-                            Text("Resultado: ${item.result} ${item.toCode}")
-                        }
-                        IconButton(onClick = { vm.toggleFavorite(item) }) {
-                            Text(if (item.isFavorite) "⭐" else "☆")
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(items) { item ->
+                    Card(onClick = { onOpenDetails(item.id) }) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text("${d2(item.amount)} ${item.fromCode} → ${item.toCode}")
+                                Text("Resultado: ${d2(item.result)} ${item.toCode}")
+                            }
+                            IconButton(onClick = { vm.toggleFavorite(item) }) {
+                                Text(if (item.isFavorite) "⭐" else "☆")
+                            }
                         }
                     }
                 }
             }
         }
-
-        Spacer(Modifier.height(12.dp))
-
-        Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
-            Text("Volver")
-        }
     }
 }
+
+

@@ -7,7 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tarea_1_2.viewmodel.ResultViewModel
+import java.util.Locale
 
+private fun d2(x: Double) = String.format(Locale.US, "%.2f", x)
+private fun d3(x: Double) = String.format(Locale.US, "%.3f", x)
 @Composable
 fun ResultScreen(
     conversionId: Long,
@@ -30,10 +33,11 @@ fun ResultScreen(
         if (c == null) {
             Text("Cargando...")
         } else {
-            Text("Monto original: ${c.amount} ${c.fromCode}")
-            Text("Tasa aplicada: ${c.rate}")
-            Text("Operación: ${c.amount} × ${c.rate}")
-            Text("Resultado: ${c.result} ${c.toCode}")
+            Text("Monto original: ${d2(c.amount)} ${c.fromCode}")
+            Text("Tasa aplicada: ${d3(c.rate)}")
+            Text("Operación: ${d2(c.amount)} × ${d3(c.rate)}")
+            Text("Resultado: ${d2(c.result)} ${c.toCode}")
+
         }
 
         Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
@@ -41,4 +45,7 @@ fun ResultScreen(
         }
     }
 }
+
+
+
 

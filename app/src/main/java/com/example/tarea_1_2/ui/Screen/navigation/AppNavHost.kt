@@ -9,14 +9,19 @@ import androidx.navigation.navArgument
 import com.example.tarea_1_2.ui.Screen.ConverterScreen
 import com.example.tarea_1_2.ui.Screen.HistoryScreen
 import com.example.tarea_1_2.ui.Screen.ResultScreen
+import com.example.tarea_1_2.ui.Screen.RatesScreen
+
 
 object Routes {
     const val CONVERTER = "converter"
     const val HISTORY = "history"
     const val RESULT = "result"
+    const val RATES = "rates"
 
     fun resultRoute(id: Long) = "$RESULT/$id"
 }
+
+
 
 @Composable
 fun AppNavHost() {
@@ -27,6 +32,7 @@ fun AppNavHost() {
         composable(Routes.CONVERTER) {
             ConverterScreen(
                 onGoHistory = { nav.navigate(Routes.HISTORY) },
+                onGoRates = { nav.navigate(Routes.RATES) },
                 onConvertSuccess = { conversionId ->
                     nav.navigate(Routes.resultRoute(conversionId))
                 }
@@ -53,5 +59,10 @@ fun AppNavHost() {
                 }
             )
         }
+        composable(Routes.RATES) {
+            RatesScreen(onBack = { nav.popBackStack() })
+        }
+
     }
 }
+
